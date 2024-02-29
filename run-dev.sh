@@ -22,5 +22,5 @@ python manage.py loaddata brands.json
 python manage.py loaddata brand_files.json
 python manage.py loaddata brand_online_credentials.json
 
-# 6. Create superuser and Run server (no care about error)
+# 6. Create superuser and Run server (no care about errors on superuser creation)
 python manage.py createsuperuser --no-input && (python manage.py runserver 0.0.0.0:8000) || (python manage.py runserver 0.0.0.0:8000)

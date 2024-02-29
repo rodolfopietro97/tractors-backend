@@ -96,6 +96,10 @@ Base directory of the project.
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
+"""
+Url for static files.
+"""
 
 # Uploads
 MEDIA_ROOT = BASE_DIR / "static/uploads"
@@ -105,13 +109,13 @@ MEDIA_URL = "/uploads/"
 TEMPLATES_DIR = "templates"
 
 # Set storage for static files
-STORAGES = {
-    "default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"},
-    "staticfiles": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-        "OPTIONS": {"location": STATIC_URL},
-    },
-}
+# STORAGES = {
+#     "default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"},
+#     "staticfiles": {
+#         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+#         "OPTIONS": {"location": STATIC_URL},
+#     },
+# }
 """
 Django storages settings for Google Cloud Storage.
 This set cloud storage as the storage for static files.
@@ -121,13 +125,21 @@ This set cloud storage as the storage for static files.
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-%ates%98ehws(!m-2)ao*=*^2j!o@ecqkbd+=d4-sn6)66%jm@"
+SECRET_KEY = os.getenv("SECRET_KEY")
+"""
+Django secret key.
+"""
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG") == "True"
+"""
+Debug mode.
+"""
 
-ALLOWED_HOSTS = ["*"]
-# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+"""
+List of allowed hosts.
+"""
 
 # Cors
 CORS_ALLOW_ALL_ORIGINS = True
@@ -222,6 +234,8 @@ MIDDLEWARE = [
     # Cors
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # @UNCOMMENT next line if you want to use whitenoise for static files
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -233,6 +247,10 @@ MIDDLEWARE = [
     # Custom middleware to lowercase the username and email of the user
     "customers.middleware.EmailUsernameLowercaseMiddleware",
 ]
+
+# @UNCOMMENT next line if you want to use whitenoise for static files
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 # HTTPS
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

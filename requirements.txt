@@ -37,3 +37,9 @@ black
 # Storage
 google-cloud-storage
 django-storages[google]
+
+# Alternative to serve static files (EVALUATE)
+# whitenoise
+
+# for Heroku
+gunicorn

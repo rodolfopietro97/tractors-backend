@@ -23,9 +23,11 @@ services:
       POSTGRES_DB: tractors-db
       POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
 
-  # This section provides the Django application.
-  backend:
-    build: '.'
+  # This section provides the Django application in DEV mode.
+  backend-dev:
+    build:
+      context: '.'
+      dockerfile: 'DEV.Dockerfile'
     stdin_open: true # docker run -i
     tty: true
     networks:
@@ -37,4 +39,22 @@ services:
       - db
     ports:
       - '8000:8000'
-    command: "sh run.sh"
+    command: "sh run-dev.sh"
+
+  # This section provides the Django application in PROD mode.
+  backend-prod:
+    build:
+      context: '.'
+      dockerfile: 'PROD.Dockerfile'
+    stdin_open: true # docker run -i
+    tty: true
+    networks:
+      tractors_dev_network:
+        ipv4_address: 1.0.0.101
+    volumes:
+      - '.:/tractors/tractors-be'
+    depends_on:
+      - db
+    ports:
+      - '8000:8000'
+    command: "sh run-prod.sh"

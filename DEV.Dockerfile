@@ -1,4 +1,4 @@
-# Dockerfile for development environment
+# DEV.Dockerfile for development environment
 
 # Python version to use
 FROM python:3.11
