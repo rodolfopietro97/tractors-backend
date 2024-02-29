@@ -1,0 +1,40 @@
+version: '3'
+
+# Define network
+networks:
+  tractors_dev_network:
+    ipam:
+      config:
+        - subnet: 1.0.0.0/24
+
+# Define services
+services:
+
+  # This section provides the database for the Django application.
+  db:
+    image: postgres
+    restart: always
+    networks:
+      tractors_dev_network:
+        ipv4_address: 1.0.0.4
+    environment:
+      POSTGRES_USER: tractors
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tractors-db
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+
+  # This section provides the Django application.
+  backend:
+    build: '.'
+    stdin_open: true # docker run -i
+    tty: true
+    networks:
+      tractors_dev_network:
+        ipv4_address: 1.0.0.100
+    volumes:
+      - '.:/tractors/tractors-be'
+    depends_on:
+      - db
+    ports:
+      - '8000:8000'
+    command: "sh run.sh"

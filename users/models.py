@@ -1,0 +1,5 @@
+"""
+Models for the user's app.
+
+NOTE: NOT IMPLEMENTED HERE, IT IS IMPLEMENTED IN THE AUTH APP!
+"""

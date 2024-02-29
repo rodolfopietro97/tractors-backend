@@ -1,0 +1,39 @@
+Django==4.2.7
+
+# for .env
+python-dotenv
+
+# for postgresql
+psycopg==3.1.9
+psycopg2-binary
+
+# for Django Rest Framework
+djangorestframework
+
+# for Django Rest Framework CORS
+django-cors-headers
+
+# for Django Rest Framework authentication
+dj-rest-auth
+django-allauth==0.56.0
+
+# for Django Rest Framework JWT
+djangorestframework-simplejwt
+
+# for Image upload
+Pillow
+
+# for Jazzmin theme of dashboard
+django-jazzmin
+
+# Timezone
+pytz
+
+# Linting
+pylint
+pylint-django
+black
+
+# Storage
+google-cloud-storage
+django-storages[google]
