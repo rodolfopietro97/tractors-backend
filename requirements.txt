@@ -45,3 +45,4 @@ dj-database-url
 
 # for Production
 gunicorn
+uvicorn

@@ -1,4 +1,4 @@
-# DEV.Dockerfile for development environment
+# Simple Django Dockerfile
 
 # Python version to use
 FROM python:3.11

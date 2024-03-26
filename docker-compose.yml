@@ -25,9 +25,7 @@ services:
 
   # This section provides the Django application in DEV mode.
   backend-dev:
-    build:
-      context: '.'
-      dockerfile: 'DEV.Dockerfile'
+    build: '.'
     stdin_open: true # docker run -i
     tty: true
     networks:
@@ -43,9 +41,7 @@ services:
 
   # This section provides the Django application in PROD mode.
   backend-prod:
-    build:
-      context: '.'
-      dockerfile: 'PROD.Dockerfile'
+    build: '.'
     stdin_open: true # docker run -i
     tty: true
     networks:

@@ -15,7 +15,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-# For Render database
 import dj_database_url
 
 # Dotenv needs to be loaded before any other settings
@@ -24,6 +23,8 @@ from dotenv import load_dotenv
 # Cloud Storage needed imports
 from google.cloud import storage
 from google.oauth2 import service_account
+
+# For Render database
 
 # Load environment variables from .env file
 
@@ -134,6 +135,8 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # Whitenoise for static files in development (UNCOMMENT if you don't want to use --nostatic in run-dev.sh when running the server)
+    # "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # My applications
     "users",
@@ -258,21 +261,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "tractors_be.wsgi.application"
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {
     "default": dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default="postgres://tractors:6GSCsFtQ24sMhOUgsz0IOoMfL7SvPH3z@dpg-co1ca721hbls73e99fog-a.oregon-postgres.render.com/tractorsdb_7139",
+        default=os.getenv("DB_URL"),
         conn_max_age=600,
     )
-    # "default": {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "NAME": os.getenv("DB_NAME"),
-    #     "USER": os.getenv("DB_USER"),
-    #     "PASSWORD": os.getenv("DB_PASSWORD"),
-    #     "HOST": os.getenv("DB_HOST"),
-    #     "PORT": os.getenv("DB_PORT"),
-    # }
 }
 
 # Password validation
@@ -324,12 +317,12 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
     STORAGES = {
-        # ...
+        # Whitenoise storage for static files
         "staticfiles": {
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
 
-# Uploads
-MEDIA_ROOT = BASE_DIR / "static/uploads"
-MEDIA_URL = "/uploads/"
+# # Uploads
+# MEDIA_ROOT = BASE_DIR / "static/uploads"
+# MEDIA_URL = "/uploads/"
