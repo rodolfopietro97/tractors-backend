@@ -22,7 +22,4 @@ for dir in "${dirs[@]}"; do
     touch ./$dir/migrations/__init__.py
 done
 
-# 3. Remove fixtures
-rm -rf ./brands/fixtures/*.json
-
 echo "Cleanup done!"

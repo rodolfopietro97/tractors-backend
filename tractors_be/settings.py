@@ -15,8 +15,12 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+# For Render database
+import dj_database_url
+
 # Dotenv needs to be loaded before any other settings
 from dotenv import load_dotenv
+
 # Cloud Storage needed imports
 from google.cloud import storage
 from google.oauth2 import service_account
@@ -80,45 +84,16 @@ Google Cloud Storage bucket main instance.
 Used to load brands and create fixture
 """
 
-GS_FILE_OVERWRITE = False
+CLOUD_STORAGE_ROOT_FOLDER_NAME = os.getenv("CLOUD_STORAGE_ROOT_FOLDER_NAME")
 """
-Not Overwrite files in Google Cloud Storage.
-Used for django-storages
+Root folder in Google Cloud Storage.
+This foler contains all the files related to brands.
 """
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 """
 Base directory of the project.
-"""
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
-"""
-Url for static files.
-"""
-
-# Uploads
-MEDIA_ROOT = BASE_DIR / "static/uploads"
-MEDIA_URL = "/uploads/"
-
-# Templates
-TEMPLATES_DIR = "templates"
-
-# Set storage for static files
-# STORAGES = {
-#     "default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"},
-#     "staticfiles": {
-#         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-#         "OPTIONS": {"location": STATIC_URL},
-#     },
-# }
-"""
-Django storages settings for Google Cloud Storage.
-This set cloud storage as the storage for static files.
 """
 
 # Quick-start development settings - unsuitable for production
@@ -234,8 +209,8 @@ MIDDLEWARE = [
     # Cors
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    # @UNCOMMENT next line if you want to use whitenoise for static files
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
+    # Use whitenoise for static files
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -257,6 +232,9 @@ MIDDLEWARE = [
 # SECURE_SSL_REDIRECT = True
 
 ROOT_URLCONF = "tractors_be.urls"
+
+# Templates
+TEMPLATES_DIR = "templates"
 
 TEMPLATES = [
     {
@@ -282,14 +260,19 @@ WSGI_APPLICATION = "tractors_be.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
-    }
+    "default": dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default="postgres://tractors:6GSCsFtQ24sMhOUgsz0IOoMfL7SvPH3z@dpg-co1ca721hbls73e99fog-a.oregon-postgres.render.com/tractorsdb_7139",
+        conn_max_age=600,
+    )
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": os.getenv("DB_NAME"),
+    #     "USER": os.getenv("DB_USER"),
+    #     "PASSWORD": os.getenv("DB_PASSWORD"),
+    #     "HOST": os.getenv("DB_HOST"),
+    #     "PORT": os.getenv("DB_PORT"),
+    # }
 }
 
 # Password validation
@@ -326,3 +309,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_URL = "static/"
+"""
+Url for static files.
+"""
+
+# This production code might break development mode, so we check whether we're in DEBUG mode
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+    STORAGES = {
+        # ...
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
+# Uploads
+MEDIA_ROOT = BASE_DIR / "static/uploads"
+MEDIA_URL = "/uploads/"

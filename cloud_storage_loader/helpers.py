@@ -4,7 +4,11 @@ Helper functions for cloud-storage-loader of brands
 
 import json
 
-from tractors_be.settings import CLOUD_STORAGE_CLIENT, GS_BUCKET_NAME
+from tractors_be.settings import (
+    CLOUD_STORAGE_CLIENT,
+    GS_BUCKET_NAME,
+    CLOUD_STORAGE_BUCKET_INSTANCE,
+)
 
 
 def get_brand_category(brand_files: list) -> str:
@@ -114,3 +118,15 @@ def get_brand_online_url(brand_files: list) -> str or None:
         return credential_file["url"]
 
     return None
+
+
+def make_logos_public(all_files: list):
+    """
+    Make public all logo files (needed to minimize the number of requests to the server front-end side).
+    This gives the possibility to use the direct link to the image to avoid querying the server for every brand.
+    """
+
+    for file in all_files:
+        if file.endswith("logo.png"):
+            blob = CLOUD_STORAGE_BUCKET_INSTANCE.blob(file)
+            blob.make_public()
