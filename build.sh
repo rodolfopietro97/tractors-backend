@@ -17,4 +17,4 @@ python manage.py migrate
 python manage.py load_brands_from_cloud_storage
 
 # 6. Create superuser
-python manage.py createsuperuser --no-input
+python manage.py createsuperuser --no-input && (exit 0) || (exit 0)
