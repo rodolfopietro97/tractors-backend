@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from tractors_be.settings import CLOUD_STORAGE_CLIENT
+from tractors_be.settings import CLOUD_STORAGE_BUCKET_INSTANCE
 from .brand_fetch_strategy.fetch_map import fetch_brand
 from .models.brand_files import BrandFile
 from .models.brand_online import BrandOnlineCredential
@@ -170,20 +170,17 @@ def get_private_file_url(request, format=None):
         requestBody = json.loads(request.body.decode("utf-8"))
         file_path = requestBody["file_path"]
 
-        if CLOUD_STORAGE_CLIENT.get_bucket("tractors").blob(file_path).exists():
-            signed_url = (
-                CLOUD_STORAGE_CLIENT.get_bucket("tractors")
-                .blob(file_path)
-                .generate_signed_url(
-                    version="v4",
-                    # This URL is valid for 15 minutes
-                    expiration=datetime.timedelta(seconds=15),
-                    # Allow 'GET' requests using this URL.
-                    method="GET",
-                )
+        if CLOUD_STORAGE_BUCKET_INSTANCE.blob(file_path).exists():
+            signed_url = CLOUD_STORAGE_BUCKET_INSTANCE.blob(
+                file_path
+            ).generate_signed_url(
+                version="v4",
+                # This URL is valid for 15 minutes
+                expiration=datetime.timedelta(seconds=15),
+                # Allow 'GET' requests using this URL.
+                method="GET",
             )
 
-            # @TODO check if user is authenticated
             return Response(
                 signed_url,
                 status=status.HTTP_200_OK,
